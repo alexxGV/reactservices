@@ -4,8 +4,11 @@ import Global from '../../Global';
 
 export default class Empleados extends Component {
 
+    cambios = 0;
+
     state = {
-        empleados: []
+        empleados: [],
+        iddepartamento: "" //IDDEPARTAMENTO QUE NOS LLEGA EN LA PRIMERA INSTANCIA
     }
 
     buscarEmpleados = () => {
@@ -13,7 +16,8 @@ export default class Empleados extends Component {
         console.log(this.props.iddepartamento)
         axios.get(url).then(res => {
             this.setState({
-                empleados: res.data
+                empleados: res.data,
+                iddepartamento: this.props.iddepartamento //GUARDO DEPARTAMENTO PARA QUE EN EL UPDATE SEA UNA UNICA VEZ
             });
         })
     }
@@ -23,7 +27,13 @@ export default class Empleados extends Component {
     }
 
     componentDidUpdate = () => {
-        this.buscarEmpleados();
+
+        //HAGO UN IF DEL IDDEPARTAMENTO PARA COMPARAR QUE FUESE DIFERENTE
+        if (this.props.iddepartamento != this.state.iddepartamento) {
+            this.buscarEmpleados();
+            this.cambios++;
+
+        }
     }
 
     render() {
@@ -33,6 +43,7 @@ export default class Empleados extends Component {
 
                     this.state.empleados.map((empleado, index) => {
                         console.log("dentro del map")
+                        console.log(this.cambios);
                         return (<h2 key={index}>{empleado.apellido}</h2>)
                     })
                 )}
